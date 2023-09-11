@@ -1,31 +1,36 @@
-import React from "react";
-import { Text, View } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
-import { Login } from "./components/login";
-import { Signup } from "./components/signup";
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView} from 'react-native';
 
+const App = () => {
+  const[data,setData]= useState ([]) ;        
 
+  const getAPIData = async () =>{
+    const url = "https://jsonplaceholder.typicode.com/posts"
+    let result = await fetch(url);
+    result= await result.json();
+    setData(result);
 
-const Tab = createMaterialTopTabNavigator();
-const App =()=>{
-  return(
-  <NavigationContainer>
-    <Tab.Navigator>
-      <Tab.Screen name='login' component={Login}/>
-      <Tab.Screen name='Signup' component={Signup}/>
+  }
+  useEffect(()=>{
+    getAPIData()
+  },[]);
+  return (
+    <ScrollView >
+      <Text style={{fontSize:30}}>list with api call</Text>
+      {data.length?
+      data.map((item)=><View style={{padding:10,borderBottomColor: "#ccc", borderBottomWidth:1}}>
+        <Text style={{fontSize:20 , backgroundColor:"#ddd"}}>id: {item.id}</Text>
+        <Text style={{fontSize:20}}>title: {item.title}</Text>
+        <Text style={{fontSize:20}}>body: {item.body}</Text>
+      </View>)
+      :
+      null
+      }
+
       
-
-
-    </Tab.Navigator>
-  </NavigationContainer>
-  )
-}
-
-
-
-
+    </ScrollView>
+  );
+};
 
 
 export default App;
