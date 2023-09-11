@@ -1,74 +1,36 @@
-import React from 'react';
-import {Button, Text, TextInput, View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView} from 'react-native';
 
-const Stack = createNativeStackNavigator();
 const App = () => {
-  const btnaction =()=>{
-    console.warn('btn pressd ')
+  const[data,setData]= useState ([]) ;        
+
+  const getAPIData = async () =>{
+    const url = "https://jsonplaceholder.typicode.com/posts"
+    let result = await fetch(url);
+    result= await result.json();
+    setData(result);
+
   }
+  useEffect(()=>{
+    getAPIData()
+  },[]);
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-      screenOptions={{
-        headerStyle:{
-          backgroundColor:'skyblue'
-          
-        },
-        headerTintColor:'black',
-        headerTitleStyle:{
-          fontSize:30
-        }
-      }}
+    <ScrollView >
+      <Text style={{fontSize:30}}>list with api call</Text>
+      {data.length?
+      data.map((item)=><View style={{padding:10,borderBottomColor: "#ccc", borderBottomWidth:1}}>
+        <Text style={{fontSize:20 , backgroundColor:"#ddd"}}>id: {item.id}</Text>
+        <Text style={{fontSize:20}}>title: {item.title}</Text>
+        <Text style={{fontSize:20}}>body: {item.body}</Text>
+      </View>)
+      :
+      null
+      }
+
       
-      >
-        <Stack.Screen name="Login" component={Login}
-        options={{
-          headerTitle:()=><Button onPress={btnaction} title='left' />,
-          headerRight:()=><Header />,
-
-          title:'user login',
-          headerStyle:{
-            backgroundColor:'skyblue',
-
-          },
-          headerTintColor:'white',
-          headerTitleStyle:{
-            fontSize:30
-          }
-        }}
-        
-        />
-        <Stack.Screen name="Home" component={Home} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    </ScrollView>
   );
 };
 
-const Header=()=>{
-  return(
-    <TextInput placeholder='SEARCH'></TextInput>
-  )
-}
-
-const Home = () => {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={{fontSize: 30}}>Home screen</Text>
-    </View>
-  );
-};
-
-const Login = (props) => {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={{fontSize: 30}}>Login screen</Text>
-      <Button
-        title="go to home page"
-        onPress={() => props.navigation.navigate('Home')}></Button>
-    </View>
-  );
-};
 
 export default App;
